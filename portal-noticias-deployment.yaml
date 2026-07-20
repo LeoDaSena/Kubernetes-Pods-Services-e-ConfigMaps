@@ -23,7 +23,17 @@ spec:
           port: 80
         periodSeconds: 10
         failureThreshold: 3
-        initialDelaySeconds: 20         
+        initialDelaySeconds: 20
+      readinessProbe:
+        httpGet:
+          path: /
+          port: 80
+        periodSeconds: 10
+        failureThreshold: 5
+        initialDelaySeconds: 3    
+      resource:
+        requests:
+          cpu: 10m              
   replicas: 3
   selector:
     matchLabels:

@@ -1,0 +1,21 @@
+apiVersion: v1
+kind: Pod
+metadata: 
+  name: pod-com-init
+spec: 
+  initContainers:
+    - name: init-myservice
+      image: busybox:1.36
+      command: ['sh', '-C']
+      args:
+        -
+          echo: "Init container iniciando..."
+          echo: "Verificando dependencias..."
+          sleep: 5
+          echo: "dependencias prontas!"
+containers:
+  - name: app
+    image: nginx:1.25
+    ports:
+      - containerPort: 80
+                 

@@ -1,0 +1,22 @@
+apiVersion: app/v1
+kind: DaemonSet
+metadata:
+  name: log-agent
+  labels:
+    app:
+spec: 
+  selector: 
+    matchLabels:
+      app: log-agent
+  template: 
+    metadata:
+      labels:
+        app: log-agent
+    spec:
+      containers:
+      - name: agent
+        image: nginx:1.25
+        resources: 
+          limits:
+            memory: "128Mil"
+            cpu: "100m"

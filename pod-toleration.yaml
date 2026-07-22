@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Pod
+metadata: 
+  name: app-especial
+  labels: 
+    app: app-especial
+spec: 
+  tolerations:
+  - key: "Reservado"
+    operator: "Equal"
+    value: "True"
+    effect: "NoSchedule"
+  containers:
+  - name: app
+    image: nginx:1.27

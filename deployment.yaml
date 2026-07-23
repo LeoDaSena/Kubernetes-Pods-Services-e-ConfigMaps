@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata: 
+  name: minha-app-dasena
+  labels: 
+    app: minha-app-dasena
+  strangy: 
+    type: RollingUpdate
+    RollingUpdate: 
+      maxSurge: 5
+      maxUnavailable: 0
+  template: 
+    metadata:
+      lables:
+        app: minha-app-dasena
+    spec: 
+      containers:
+        - name: app
+          image: nginx:1.27
+          ports: 
+            - containerPort: 80
+          resources: 
+            requests: 
+              cpu: 50m
+              memory: 64Mi
+            limits:
+              cpu: 100m
+              memory: 127Mi  

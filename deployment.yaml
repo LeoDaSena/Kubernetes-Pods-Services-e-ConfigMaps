@@ -1,6 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata: 
+  namespace: app-java
   name: minha-app-dasena
   labels: 
     app: minha-app-dasena

@@ -1,0 +1,21 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pod-liveness
+spec:
+  containers:
+  - name: app
+    image: busybox
+    args:
+    - /bin/sh
+    - -c
+    # Cria arquivo, aguarda 30s, remove (simula falha)
+    - touch /tmp/healthy; sleep 30; rm -f /tmp/healthy; sleep 600
+    livenessProbe:
+      exec:
+        command:
+        - cat
+        - /tmp/healthy
+      initialDelaySeconds: 5
+      periodSeconds: 5
+      failureThreshold: 3

@@ -1,0 +1,37 @@
+# HTTPRoute para a API
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: api-route
+  namespace: demo
+spec:
+  parentRefs:
+  - name: meu-gateway
+    namespace: gateway-infra
+  rules:
+  - matches:
+    - path:
+        type: PathPrefix
+        value: /api
+    backendRefs:
+    - name: api-service
+      port: 80
+---
+# HTTPRoute para o Web
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: web-route
+  namespace: demo
+spec:
+  parentRefs:
+  - name: meu-gateway
+    namespace: gateway-infra
+  rules:
+  - matches:
+    - path:
+        type: PathPrefix
+        value: /web
+    backendRefs:
+    - name: web-service
+      port: 80

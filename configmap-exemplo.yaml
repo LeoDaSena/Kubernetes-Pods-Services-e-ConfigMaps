@@ -1,0 +1,24 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: config-app
+data:
+  # Configurações simples (chave-valor)
+  APP_ENV: "producao"
+  LOG_LEVEL: "info"
+
+  # Arquivo de configuração completo
+  nginx.conf: |
+    server {
+        listen 80;
+        server_name localhost;
+        location / {
+            root /usr/share/nginx/html;
+        }
+    }
+
+  # Outro arquivo de configuração
+  app.properties: |
+    database.host=localhost
+    database.port=5432
+    cache.enabled=true

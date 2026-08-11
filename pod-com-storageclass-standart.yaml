@@ -1,0 +1,29 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pod-dinamico-standard # Um nome diferente para o Pod, para evitar conflitos
+spec:
+  # nodeSelector e tolerations podem ser mantidos ou ajustados conforme a necessidade do seu cluster
+  # Na aula, o instrutor não especifica se esses campos mudam para o cenário 'standard',
+  # então os manteremos como no exemplo anterior para consistência, mas você pode removê-los
+  # se seu cluster não precisar deles (ex: um cluster de nó único sem taints).
+  nodeSelector:
+    kubernetes.io/hostname: fundamentos-kubernetes-control-plane
+  tolerations:
+  - key: "node-role.kubernetes.io/control-plane"
+    operator: "Exists"
+    effect: "NoSchedule"
+  containers:
+  - name: app
+    image: alpine
+    command:
+      - /bin/sh
+      - -c
+      - "echo 'Aprovisionamento dinâmico com StorageClass standard' > /dados/test.txt && sleep 3600" # Conteúdo do arquivo ajustado
+    volumeMounts:
+    - name: storage
+      mountPath: /dados
+  volumes:
+  - name: storage
+    persistentVolumeClaim:
+      claimName: pvc-standard # Referencia o PVC criado para o StorageClass standard

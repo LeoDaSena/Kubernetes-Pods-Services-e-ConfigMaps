@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: pvc-standard # Nome do PVC usado no segundo cenário
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: standard # Aponta para o StorageClass padrão
+  resources:
+    requests:
+      storage: 1Gi # Solicita 1Gi de armazenamento

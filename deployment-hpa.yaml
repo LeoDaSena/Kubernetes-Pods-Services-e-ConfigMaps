@@ -1,0 +1,57 @@
+# Deployment para testar HPA
+# Usamos nginx por ser uma imagem conhecida e confiável
+# O request de CPU é baixo de propósito para que o HPA
+# consiga detectar o aumento de uso durante o teste de carga
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app-hpa
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: app-hpa
+  template:
+    metadata:
+      labels:
+        app: app-hpa
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:1.27
+        ports:
+        - containerPort: 80
+        resources:
+          requests:
+            cpu: "50m"      # IMPORTANTE: HPA precisa de requests!
+            memory: "64Mi"  # Baixo de propósito para o HPA escalar mais fácil
+          limits:
+            cpu: "100m"
+            memory: "128Mi"
+        # Probes garantem que o HPA só conte pods realmente prontos
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 80
+          initialDelaySeconds: 5
+          periodSeconds: 5
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 80
+          initialDelaySeconds: 10
+          periodSeconds: 10
+
+---
+# Service para acessar a aplicação
+apiVersion: v1
+kind: Service
+metadata:
+  name: app-hpa-svc
+spec:
+  selector:
+    app: app-hpa
+  ports:
+  - port: 80
+    targetPort: 80
+  type: ClusterIP

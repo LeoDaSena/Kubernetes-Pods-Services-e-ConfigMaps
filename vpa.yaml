@@ -1,0 +1,85 @@
+# Exemplo de Vertical Pod Autoscaler
+# Requer VPA instalado no cluster
+apiVersion: autoscaling.k8s.io/v1
+kind: VerticalPodAutoscaler
+metadata:
+  name: app-vpa
+spec:
+  # Deployment alvo
+  targetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: meu-app
+
+  # Politica de atualização
+  updatePolicy:
+    # Off: apenas recomenda (não altera)
+    # Initial: aplica apenas em novos pods
+    # Auto: recria pods para aplicar
+    # InPlaceOrRecreate: tenta redimensionar sem reiniciar (K8s 1.35+)
+    updateMode: "Off"
+
+  # Politicas de recursos
+  resourcePolicy:
+    containerPolicies:
+      # Aplica a todos containers
+      - containerName: "*"
+        # Mínimo permitido
+        minAllowed:
+          cpu: 50m
+          memory: 64Mi
+        # Máximo permitido
+        maxAllowed:
+          cpu: 2
+          memory: 2Gi
+        # Controlar quais recursos o VPA gerencia
+        controlledResources: [ "cpu", "memory" ]
+        # Modo de controle
+        controlledValues: RequestsAndLimits
+      ---
+# Deployment de exemplo para usar com VPA
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: meu-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: meu-app
+  template:
+    metadata:
+      labels:
+        app: meu-app
+    spec:
+      containers:
+      - name: app
+        image: nginx:1.27
+        # resizePolicy define se cada recurso pode ser alterado sem restart (K8s 1.33+)
+        # NotRequired = muda sem reiniciar | RestartContainer = reinicia o container
+        resizePolicy:
+          - resourceName: cpu
+            restartPolicy: NotRequired
+          - resourceName: memory
+            restartPolicy: NotRequired
+        resources:
+          requests:
+            cpu: "100m"
+            memory: "128Mi"
+          limits:
+            cpu: "200m"
+            memory: "256Mi"
+        # Probes sao essenciais - quando o VPA recria o pod (fallback)
+        # o readinessProbe garante que só receba tráfego quando pronto
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 80
+          initialDelaySeconds: 5
+          periodSeconds: 5
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 80
+          initialDelaySeconds: 10
+          periodSeconds: 10

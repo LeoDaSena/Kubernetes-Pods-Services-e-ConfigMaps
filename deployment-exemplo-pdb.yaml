@@ -1,0 +1,62 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app-resiliente
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: app-resiliente
+  template:
+    metadata:
+      labels:
+        app: app-resiliente
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:1.27
+        ports:
+        - containerPort: 80
+        # Resources bem definidos
+        resources:
+          # Requests: garantido pelo scheduler
+          requests:
+            cpu: "100m"     # 0.1 CPU
+            memory: "128Mi" # 128 MB
+          # Limits: máximo permitido
+          limits:
+            cpu: "200m"     # 0.2 CPU (throttled se passar)
+            memory: "256Mi" # 256 MB (OOMKilled se passar)
+        # Probes para alta disponibilidade
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 80
+          initialDelaySeconds: 5
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 80
+          initialDelaySeconds: 5
+          periodSeconds: 5
+      # Spread entre nodes para HA
+      topologySpreadConstraints:
+      - maxSkew: 1
+        topologyKey: kubernetes.io/hostname
+        whenUnsatisfiable: ScheduleAnyway
+        labelSelector:
+          matchLabels:
+            app: app-resiliente
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: app-resiliente-svc
+spec:
+  selector:
+    app: app-resiliente
+  ports:
+  - port: 80
+    targetPort: 80
+  type: ClusterIP

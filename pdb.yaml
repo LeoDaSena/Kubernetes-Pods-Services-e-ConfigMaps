@@ -1,0 +1,15 @@
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: app-resiliente
+spec:
+  # Opção 1: Mínimo de pods disponíveis
+  minAvailable: 2
+
+  # Opção 2: Máximo de pods indisponíveis (descomente para usar)
+  # maxUnavailable: 1
+  
+  # Selector para os pods
+  selector:
+    matchLabels:
+      app: app-resiliente

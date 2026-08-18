@@ -1,0 +1,43 @@
+# Este arquivo define o Deployment para o gerador de carga.
+# Ele cria um pod que utiliza a ferramenta 'wget' para gerar requisições contínuas
+# para o serviço da aplicação 'stress-app-svc', simulando uma carga de trabalho.
+
+---
+# Definição do Deployment para o gerador de carga.
+# Ele cria um pod que executa um script para gerar requisições.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: load-generator # Nome do Deployment do gerador de carga
+spec:
+  replicas: 1 # Inicia com 1 réplica (pod) do gerador de carga
+  selector:
+    matchLabels:
+      app: load-generator # Seleciona os pods com o label 'app: load-generator'
+  template:
+    metadata:
+      labels:
+        app: load-generator # Labels aplicados aos pods criados por este Deployment
+    spec:
+      containers:
+      - name: busybox # Nome do contêiner
+        image: busybox:1.36 # Imagem 'busybox' que contém ferramentas Linux básicas, como 'wget'
+        command: # Comando a ser executado dentro do contêiner
+          - /bin/sh
+          - -c
+          - | # O pipe '|' permite escrever um script multi-linha
+            echo "Iniciando gerador de carga..." # Mensagem de início nos logs
+            while true; do # Loop infinito para gerar carga continuamente
+              # Faz uma requisição HTTP para o serviço 'stress-app-svc'
+              # -q: modo silencioso (não mostra progresso)
+              # -O-: envia a saída para stdout
+              # > /dev/null 2>&1: redireciona stdout e stderr para /dev/null (descarta a saída)
+              wget -q -O- http://stress-app-svc > /dev/null 2>&1
+            done
+        resources: # Definição de recursos para o contêiner do gerador de carga
+          requests:
+            cpu: "50m" # Requisição mínima de CPU
+            memory: "32Mi" # Requisição mínima de memória
+          limits:
+            cpu: "100m" # Limite máximo de CPU
+            memory: "64Mi" # Limite máximo de memória

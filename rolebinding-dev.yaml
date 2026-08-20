@@ -1,0 +1,13 @@
+apiVersion: rbac.authorization.k8s.io/v1 # Define a versão da API do Kubernetes para RBAC.
+kind: RoleBinding # Indica que estamos criando um recurso do tipo RoleBinding. Um RoleBinding associa uma Role a um ou mais "subjects" (usuários, grupos ou ServiceAccounts) dentro de um namespace específico.
+metadata:
+  name: dev-user-rolebinding # Nome do RoleBinding que estamos criando.
+  namespace: dev # O namespace ao qual este RoleBinding se aplica. Ele deve estar no mesmo namespace da Role que está sendo referenciada.
+subjects: # Lista os "sujeitos" (usuários, grupos ou ServiceAccounts) que receberão as permissões da Role.
+- kind: User # O tipo do sujeito. Pode ser "User" (usuário), "Group" (grupo) ou "ServiceAccount".
+  name: dev-joao # O nome do usuário que será vinculado à Role. Este nome deve corresponder ao nome do usuário que tentará acessar o cluster.
+  apiGroup: rbac.authorization.k8s.io # O grupo da API ao qual o sujeito pertence. Para usuários e grupos, geralmente é "rbac.authorization.k8s.io".
+roleRef: # Referência à Role que este RoleBinding irá associar aos sujeitos.
+  kind: Role # O tipo do recurso que está sendo referenciado. Neste caso, é uma "Role".
+  name: dev-role # O nome da Role que está sendo referenciada. Deve ser o mesmo nome da Role que você criou (ex: "dev-role").
+  apiGroup: rbac.authorization.k8s.io # O grupo da API ao qual a Role referenciada pertence.

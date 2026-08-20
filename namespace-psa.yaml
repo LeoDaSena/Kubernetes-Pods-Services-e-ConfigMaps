@@ -1,0 +1,24 @@
+# Namespace com Pod Security Admission (PSA) no nível "restricted"
+# As labels definem qual nível de segurança será aplicado.
+
+# Modos:
+# - enforce: REJEITA pods que não atendem o nível (não cria o pod)
+# - audit: REGISTRA no audit log (cria o pod, mas loga a violação)
+# - warn: MOSTRA AVISO ao usuário (cria o pod, mas avisa)
+
+# Neste exemplo, usamos "restricted" nos 3 modos para máximo rigor.
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: seguro
+  labels:
+    # Nivel "restricted" exige:
+    # - runAsNonRoot: true
+    # - allowPrivilegeEscalation: false
+    # - capabilities.drop: [ALL]
+    # - seccompProfile.definido
+    # - Sem hostNetwork, hostPID, hostIPC
+    # - Sem volumes hostPath
+    pod-security.kubernetes.io/enforce: restricted # Rejeita pods inseguros
+    pod-security.kubernetes.io/audit: restricted   # Registra violações no log
+    pod-security.kubernetes.io/warn: restricted    # Mostra aviso ao usuário

@@ -1,0 +1,23 @@
+apiVersion: rbac.authorization.k8s.io/v1 # Define a versão da API do Kubernetes para RBAC (Controle de Acesso Baseado em Papéis).
+kind: Role # Indica que estamos criando um recurso do tipo Role. Uma Role define permissões dentro de um namespace específico.
+metadata:
+  name: dev-role # Nome da Role que estamos criando. Neste caso, "dev-role".
+  namespace: dev # O namespace ao qual esta Role se aplica. As permissões definidas aqui só valerão para o namespace "dev".
+rules: # Bloco onde definimos as regras de permissão.
+- apiGroups: # Define a qual grupo de APIs do Kubernetes as regras se aplicam.
+  - ""                    # O grupo vazio ("") refere-se à API core do Kubernetes, onde estão recursos como Pods e Services.
+  resources: # Lista os tipos de recursos do Kubernetes aos quais esta regra concede acesso.
+  - pods                  # Permite interagir com recursos do tipo "pods".
+  - services              # Permite interagir com recursos do tipo "services".
+  verbs: # Lista as ações (verbos) que podem ser realizadas nos recursos especificados.
+  - get                   # Permite ler um recurso específico (ex: kubectl get pod meu-pod).
+  - list                  # Permite listar todos os recursos de um tipo (ex: kubectl list pods).
+  - watch                 # Permite observar mudanças nos recursos em tempo real.
+- apiGroups: # Segunda regra, para outro grupo de APIs.
+  - apps                  # O grupo "apps" contém recursos como Deployments, StatefulSets, DaemonSets.
+  resources: # Recursos aos quais esta segunda regra concede acesso.
+  - deployments           # Permite interagir com recursos do tipo "deployments".
+  verbs: # Ações permitidas para os deployments.
+  - get                   # Permite ler um deployment específico.
+  - list                  # Permite listar todos os deployments.
+  - watch                 # Permite observar mudanças nos deployments.

@@ -1,0 +1,23 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: viewer-global
+rules:
+- apiGroups:
+  - ""                    # API core
+  resources:
+  - pods                  # Permite ver pods em qualquer namespace
+  - services              # Permite ver services em qualquer namespace
+  - namespaces            # Permite ver namespaces (recurso sem namespace)
+  verbs:
+  - get                   # Ler um recurso especifico
+  - list                  # Listar todos os recursos
+  - watch                 # Observar mudanças
+- apiGroups:
+  - apps                  # Grupo "apps"
+  resources:
+  - deployments           # Permite ver deployments em qualquer namespace
+  verbs:
+  - get                   # Ler um deployment especifico
+  - list                  # Listar todos os deployments
+  - watch                 # Observar mudanças

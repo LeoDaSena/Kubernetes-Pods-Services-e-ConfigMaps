@@ -1,0 +1,18 @@
+# RoleBinding "sa-pod-reader-binding" - liga o ServiceAccount à Role
+# Sem o RoleBinding, o ServiceAccount não tem nenhuma permissão
+# O RoleBinding conecta: QUEM (subjects) pode fazer O QUE (roleRef)
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  # Nome do RoleBinding
+  name: sa-pod-reader-binding
+  # Namespace onde o RoleBinding existe
+  namespace: dev
+subjects: # QUEM recebe as permissões
+- kind: ServiceAccount  # Tipo do sujeito: ServiceAccount (identidade do Pod)
+  name: dev-sa          # Nome do ServiceAccount criado anteriormente
+  namespace: dev        # Namespace do ServiceAccount
+roleRef: # QUAL Role será aplicada
+  kind: Role            # Tipo: Role (namespace-scoped)
+  name: pod-reader      # Nome da Role criada anteriormente
+  apiGroup: rbac.authorization.k8s.io # Grupo da API de RBAC

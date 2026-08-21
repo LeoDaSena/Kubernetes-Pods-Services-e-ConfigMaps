@@ -1,0 +1,20 @@
+# Role "pod-reader" - permissões de LEITURA para o ServiceAccount do Pod
+# Esta Role permite que o Pod leia pods e services no namespace dev
+# É uma boa prática criar Roles específicas para cada ServiceAccount
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  # Nome da Role - será referenciado no RoleBinding
+  name: pod-reader
+  # Namespace onde a Role existe e tem efeito
+  namespace: dev
+rules:
+# Regra: acesso de leitura a pods e services
+- apiGroups: [""] # Grupo vazio = API core (pods, services, confignaps, etc.)
+  resources: 
+  - pods      # Permite interagir com pods
+  - services  # Permite interagir com services
+  verbs:
+  - get     # Ler um recurso específico por nome
+  - list    # Listar todos os recursos
+  - watch   # Observar mudanças em tempo real

@@ -1,0 +1,24 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pod-no-caps
+  labels:
+    app: demo-seguranca
+    exemplo: capabilities-minimas
+spec:
+  securityContext:
+    runAsNonRoot: true      # Não roda como root
+    runAsUser: 1000         # Usuário comum
+    runAsGroup: 1000        # Grupo comum
+  containers:
+  - name: nginx
+    image: nginx:1.27
+    ports:
+    - containerPort: 80
+    securityContext:
+      allowPrivilegeEscalation: false # Sem escalação de privilégios
+      capabilities:
+        drop:
+        - ALL               # Remove TODAS as capabilities
+        add:
+        - NET_BIND_SERVICE  # Permite bind em portas < 1024 (necessário para nginx na porta 80)
